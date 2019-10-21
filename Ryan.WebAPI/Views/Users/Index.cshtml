@@ -1,0 +1,105 @@
+﻿@model IEnumerable<Ryan.WebAPI.Models.User>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Content/layui/layui.js"></script>
+
+<table class="layui-hide" id="demo" lay-filter="test" lay-data="{skin:'line', even:true, size:'sm'}"></table>
+
+<script type="text/html" id="toolbardemo">
+    <div class="layui-btn-container">
+        <!--<button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+    <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+    <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>-->
+        <button class="layui-btn layui-btn-sm" lay-event="insert">新增</button>
+        <button class="layui-btn layui-btn-sm" lay-event="update">编辑</button>
+        <button class="layui-btn layui-btn-sm" lay-event="delete">删除</button>
+    </div>
+</script>
+
+<script>
+    layui.use('table', function () {
+        var table = layui.table;
+
+        //展示已知数据
+        table.render({
+            elem: '#demo'
+            , title: '用户数据表'
+            , loading: true
+            , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            , height: 'full-160'
+            , cols: [[
+                { type: 'checkbox', fixed: 'left' }
+                , { field: 'UserID', width: 80, title: 'UserID', sort: true }
+                , { field: 'Username', width: 80, title: '用户名' }
+                , { field: 'Sex', width: 80, title: '性别', sort: true }
+                , { field: 'City', width: 80, title: '城市' }
+                , { field: 'Sign', title: '签名', width: '30%', minWidth: 100 } //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+                , { field: 'Experience', title: '积分', sort: true }
+                , { field: 'Score', title: '评分', sort: true }
+                , { field: 'Classify', title: '职业' }
+                , { field: 'Wealth', width: 137, title: '财富', sort: true }
+            ]]
+            , url: '/Users/GetAll/'
+            //, skin: 'line' //表格风格
+            //, even: true
+            , page: true //是否显示分页
+            , limits: [5, 7, 8, 10]
+            , limit: 8 //每页默认显示的数量
+            , toolbar: '#toolbardemo'
+        });
+
+        //头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：' + data.length + ' 个');
+                    break;
+
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                    break;
+
+                //自定义头工具栏右侧图标 - 提示
+                case 'LAYTABLE_TIPS':
+                    //layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                    break;
+
+                case 'insert':
+                    //layer.msg('添加');
+                    break;
+
+                case 'update':
+                    var data = checkStatus.data;
+                    if (data.length === 0) {
+                        layer.msg('请选择一行');
+                    }
+                    else if (data.length > 1) {
+                        layer.msg('只能同时编辑一个');
+                    }
+                    else {
+                        //layer.alert('编辑 [id]：' + checkStatus.data[0].id);
+                    }
+                    break;
+
+                case 'delete':
+                    var data = checkStatus.data;
+                    if (data.length === 0) {
+                        layer.msg('请选择一行');
+                    } else {
+                        //layer.msg('删除');
+                    }
+                    break;            
+            };
+        });
+    });
+</script>
